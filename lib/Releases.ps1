@@ -41,7 +41,12 @@ function Get-VstsReleaseDefinition
         [String] $Project,
 
         [Parameter()]
-        [Int32] $DefinitionId
+        [Int32] $DefinitionId,
+
+        [Parameter()]
+        [ValidateSet("Environments", "Artefacts")]
+        [String] $Expansions
+
     )
 
     if ($PSCmdlet.ParameterSetName -eq 'Account')
@@ -56,6 +61,10 @@ function Get-VstsReleaseDefinition
                 -BoundParameters $PSBoundParameters `
                 -ParameterList 'DefinitionId')
     }
+    
+    if ($Expansions){
+        $additionalInvokeParameters.QueryStringParameters += @{"`$expand" = $Expansions};
+    };
 
     $result = Invoke-VstsEndpoint `
         -Session $Session `
